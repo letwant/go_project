@@ -16,14 +16,14 @@ func readMaze(filename string) [][]int {
 	for i := range maze {
 		maze[i] = make([]int, col)
 		for j := range maze[i] {
-			fmt.Fscanf(file, "%d", maze[i][j])
+			fmt.Fscanf(file, "%d", &maze[i][j])
 		}
 	}
 	return maze
 }
 
 func main() {
-	maze := readMaze("maze/maze.in")
+	maze := readMaze("maze/maze.txt")
 	for _, row := range maze {
 		for _, val := range row {
 			fmt.Printf("%d ", val)
