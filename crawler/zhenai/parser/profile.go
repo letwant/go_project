@@ -4,22 +4,36 @@ import (
 	"go_project/crawler/engine"
 	"go_project/crawler/model"
 	"regexp"
-	"strconv"
+	"strings"
 )
 
-var ageRe = regexp.MustCompile(`<div class="tag" data-v-3e01facc>([\d])+岁</div>`)
-var marriageRe = regexp.MustCompile(`<div class="tag" data-v-3e01facc>([^<]+)</div>`)
-var profileRe = regexp.MustCompile(`"basicInfo":\[(.+)[^]]]`)
+//var ageRe = regexp.MustCompile(`<div class="tag" data-v-3e01facc>([\d])+岁</div>`)
+//var marriageRe = regexp.MustCompile(`<div class="tag" data-v-3e01facc>([^<]+)</div>`)
+var profileRe = regexp.MustCompile(`"basicInfo":\[(".+?)\]`)
 
 func ParseProfile(contents []byte) engine.ParseResult {
 	profile := model.Profile{}
-	age, err := strconv.Atoi(extractString(contents, ageRe))
-	if err != nil {
-		profile.Age = age
+	basicInfo := extractString(contents, profileRe)
+	basicInfoList := strings.Split(basicInfo, ",")
+	if len(basicInfoList) < 9 {
+		tmpSlice := basicInfoList[4:]
+		basicInfoList = append(basicInfoList, "")
+		basicInfoList = append(basicInfoList, tmpSlice...)
 	}
-	profile.Marriage = extractString(contents, marriageRe)
-
-
+	profile.Age = basicInfoList[1]
+	profile.Marriage = basicInfoList[0]
+	profile.Xinzuo = basicInfoList[2]
+	profile.Height = basicInfoList[3]
+	profile.Weight = basicInfoList[4]
+	profile.Income = basicInfoList[6]
+	profile.Occupation = basicInfoList[7]
+	profile.Education = basicInfoList[8]
+	profile.House = ""
+	profile.Car = ""
+	result := engine.ParseResult{
+		Items: []interface{}{profile},
+	}
+	return result
 }
 
 func extractString(contents []byte, re *regexp.Regexp) string {
