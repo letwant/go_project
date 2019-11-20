@@ -1,8 +1,10 @@
 package parser
 
 import (
+	"fmt"
 	"go_project/crawler/engine"
 	"go_project/crawler/model"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -21,7 +23,7 @@ func ParseProfile(contents []byte, name string) engine.ParseResult {
 	sexInfo := extractString(contents, sexInfoRe)
 	if sexInfo == "1" {
 		profile.Gender = "女"
-	}else {
+	} else {
 		profile.Gender = "男"
 	}
 	basicInfo := extractString(contents, basicInfoRe)
@@ -37,19 +39,23 @@ func ParseProfile(contents []byte, name string) engine.ParseResult {
 			profile.Car = strings.Trim(basic, `"`)
 		}
 	}
-	if len(basicInfoSlice) < 9 {
+	if len(basicInfoSlice) < 9 && len(basicInfoSlice) > 6 {
 		tmpSlice := basicInfoSlice[4:]
 		basicInfoSlice = append(basicInfoSlice, "")
 		basicInfoSlice = append(basicInfoSlice, tmpSlice...)
 	}
-	profile.Age =  basicInfoSlice[1]
+	if len(basicInfoSlice) == 0 {
+		fmt.Println(basicInfoSlice)
+		os.Exit(0)
+	}
+	profile.Age = basicInfoSlice[1]
 	profile.Marriage = basicInfoSlice[0]
 	profile.Xinzuo = basicInfoSlice[2]
 	profile.Height = basicInfoSlice[3]
 	profile.Weight = basicInfoSlice[4]
-	profile.Income = basicInfoSlice[6]
-	profile.Occupation = basicInfoSlice[7]
-	profile.Education = basicInfoSlice[8]
+	profile.Income = basicInfoSlice[5]
+	profile.Occupation = basicInfoSlice[6]
+	profile.Education = basicInfoSlice[7]
 
 	result := engine.ParseResult{
 		Items: []interface{}{profile},
