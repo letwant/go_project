@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"go_project/crawler/engine"
 	"go_project/crawler/model"
-	"os"
 	"regexp"
 	"strings"
 )
@@ -44,9 +43,9 @@ func ParseProfile(contents []byte, name string) engine.ParseResult {
 		basicInfoSlice = append(basicInfoSlice, "")
 		basicInfoSlice = append(basicInfoSlice, tmpSlice...)
 	}
-	if len(basicInfoSlice) == 0 {
+	if len(basicInfoSlice) <= 6 {
 		fmt.Println(basicInfoSlice)
-		os.Exit(0)
+		return engine.ParseResult{}
 	}
 	profile.Age = basicInfoSlice[1]
 	profile.Marriage = basicInfoSlice[0]
