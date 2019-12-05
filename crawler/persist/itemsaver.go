@@ -3,12 +3,13 @@ package persist
 import (
 	"context"
 	"github.com/olivere/elastic"
+	"go_project/crawler/model"
 	"log"
 )
 
-func ItemSaver() chan interface{} {
+func ItemSaver() (chan model.Profile, error) {
 
-	out := make(chan interface{})
+	out := make(chan model.Profile)
 	go func() {
 		itemCount := 0
 		for {
@@ -21,7 +22,7 @@ func ItemSaver() chan interface{} {
 			//}
 		}
 	}()
-	return out
+	return out, nil
 }
 
 func save(item interface{}) (id string, err error) {

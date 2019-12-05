@@ -1,9 +1,11 @@
 package engine
 
+import "go_project/crawler/model"
+
 type ConcurrentEngine struct {
 	Scheduler   Scheduler
 	WorkerCount int
-	ItemChan    chan interface{}
+	ItemChan    chan model.Profile
 }
 
 type Scheduler interface {

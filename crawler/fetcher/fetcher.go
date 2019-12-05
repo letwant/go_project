@@ -5,15 +5,24 @@ import (
 	"io/ioutil"
 	"net/http"
 	"time"
+	"zhenai-crawler/crawler/common/reporter"
 )
 
 var rateLimiter = time.Tick(10 * time.Millisecond)
+
+const UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36"
+
 func Fetch(url string) ([]byte, error) {
-	<- rateLimiter
-	resp, err := http.Get(
-		url)
+	<-rateLimiter
+	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
+	}
+	request.Header.Add("User-Agent", UserAgent)
+	resp, err := http.DefaultClient.Do(request)
+	if err != nil {
+		reporter.ReportError("HttpClient请求出错", err)
+		panic(err)
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
