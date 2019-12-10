@@ -2,11 +2,11 @@ package handler
 
 import (
 	"encoding/json"
-	dblayer "filestore-server/db"
-	"filestore-server/meta"
-	"filestore-server/store/oss"
-	"filestore-server/util"
 	"fmt"
+	dblayer "go_project/filestore-server/db"
+	"go_project/filestore-server/meta"
+	"go_project/filestore-server/store/oss"
+	"go_project/filestore-server/util"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -73,11 +73,11 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		// TODO: 更新用户文件表记录
 		r.ParseForm()
 		username := r.Form.Get("username")
- 		suc := dblayer.OnUserFileUploadFinished(username, fileMeta.FileSha1,
+		suc := dblayer.OnUserFileUploadFinished(username, fileMeta.FileSha1,
 			fileMeta.FileName, fileMeta.FileSize)
 		if suc {
 			http.Redirect(w, r, "/static/view/home.html", http.StatusFound)
-		}else {
+		} else {
 			w.Write([]byte("Upload Failed!"))
 		}
 	}
@@ -125,7 +125,6 @@ func FileQueryHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write(data)
-
 
 }
 
@@ -217,7 +216,7 @@ func TryFastUploadHandler(w http.ResponseWriter, r *http.Request) {
 	if fileMeta == nil {
 		resp := util.RespMsg{
 			Code: -1,
-			Msg:"秒传失败， 请访问普通上传接口",
+			Msg:  "秒传失败， 请访问普通上传接口",
 		}
 		w.Write(resp.JSONBytes())
 		return
@@ -226,12 +225,12 @@ func TryFastUploadHandler(w http.ResponseWriter, r *http.Request) {
 	suc := dblayer.OnUserFileUploadFinished(username, filehash, filename, int64(filesize))
 	if suc {
 		resp := util.RespMsg{
-			Code:0,
-			Msg:"秒传成功",
+			Code: 0,
+			Msg:  "秒传成功",
 		}
 		w.Write(resp.JSONBytes())
 		return
-	}else{
+	} else {
 		resp := util.RespMsg{
 			Code: -2,
 			Msg:  "秒传失败,请稍后重试",

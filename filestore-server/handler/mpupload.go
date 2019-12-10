@@ -1,11 +1,11 @@
 package handler
 
 import (
-	rPool"filestore-server/cache/redis"
-	dblayer "filestore-server/db"
-	"filestore-server/util"
 	"fmt"
 	"github.com/garyburd/redigo/redis"
+	rPool "go_project/filestore-server/cache/redis"
+	dblayer "go_project/filestore-server/db"
+	"go_project/filestore-server/util"
 	"math"
 	"net/http"
 	"os"
@@ -17,10 +17,10 @@ import (
 
 // MultipartUploadInfo : 初始化信息
 type MultipartUploadInfo struct {
-	FileHash string
-	FileSize int
-	UploadID string
-	ChunkSize int
+	FileHash   string
+	FileSize   int
+	UploadID   string
+	ChunkSize  int
 	ChunkCount int
 }
 
@@ -40,11 +40,11 @@ func InitialMultipartUploadHandler(w http.ResponseWriter, r *http.Request) {
 	defer rConn.Close()
 	// 3.生成分块上传的初始化信息
 	upInfo := MultipartUploadInfo{
-		FileHash:filehash,
-		FileSize:filesize,
-		UploadID:username+fmt.Sprintf("%x", time.Now().UnixNano()),
-		ChunkSize:5*1024*1024, //5MB
-		ChunkCount:int(math.Ceil(float64(filesize)/(2*1024*1024))),
+		FileHash:   filehash,
+		FileSize:   filesize,
+		UploadID:   username + fmt.Sprintf("%x", time.Now().UnixNano()),
+		ChunkSize:  5 * 1024 * 1024, //5MB
+		ChunkCount: int(math.Ceil(float64(filesize) / (2 * 1024 * 1024))),
 	}
 	// 4.将初始化信息写入到redis缓存
 	rConn.Do("HSET", "MP_"+upInfo.UploadID, "chunkcount", upInfo.ChunkCount)
@@ -65,7 +65,7 @@ func UploadPartHandler(w http.ResponseWriter, r *http.Request) {
 	rConn := rPool.RedisPool().Get()
 	defer rConn.Close()
 	//3.获得文件句柄，用于存储分块内容
-	fpath := "/data/"+uploadID+"/"+chunkIndex
+	fpath := "/data/" + uploadID + "/" + chunkIndex
 	os.MkdirAll(path.Dir(fpath), 0744)
 	fd, err := os.Create(fpath)
 	if err != nil {
@@ -109,12 +109,12 @@ func CompleteUploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	totalCount := 0
 	chunkCount := 0
-	for i:=0; i < len(data); i += 2{
+	for i := 0; i < len(data); i += 2 {
 		k := string(data[i].([]byte))
 		v := string(data[i+1].([]byte))
 		if k == "chunkcount" {
 			totalCount, _ = strconv.Atoi(v)
-		}else if strings.HasPrefix(k, "chkidx_") && v == "1" {
+		} else if strings.HasPrefix(k, "chkidx_") && v == "1" {
 			chunkCount ++
 		}
 	}

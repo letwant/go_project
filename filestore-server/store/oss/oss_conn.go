@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 )
-import cfg "filestore-server/config"
+import cfg "go_project/filestore-server/config"
 
 var ossCli *oss.Client
 

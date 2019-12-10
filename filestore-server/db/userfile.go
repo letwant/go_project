@@ -1,18 +1,18 @@
 package db
 
 import (
-	mydb "filestore-server/db/mysql"
 	"fmt"
+	mydb "go_project/filestore-server/db/mysql"
 	"time"
 )
 
 // UserFile : 用户文件表结构体
 type UserFile struct {
-	UserName string
-	FileHash string
-	FileName string
-	FileSize int64
-	UploadAt string
+	UserName    string
+	FileHash    string
+	FileName    string
+	FileSize    int64
+	UploadAt    string
 	LastUpdated string
 }
 

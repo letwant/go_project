@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"filestore-server/util"
 	"fmt"
+	dblayer "go_project/filestore-server/db"
+	"go_project/filestore-server/util"
 	"io/ioutil"
 	"net/http"
-	dblayer "filestore-server/db"
 	"time"
 )
 
@@ -33,21 +33,22 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Invalid parameter"))
 		return
 	}
-	enc_passwd := util.Sha1([]byte(passwd+pwd_salt))
+	enc_passwd := util.Sha1([]byte(passwd + pwd_salt))
 	suc := dblayer.UserSignUp(username, enc_passwd)
 	if suc {
 		w.Write([]byte("SUCCESS"))
-	}else {
+	} else {
 		w.Write([]byte("FAILED"))
 	}
 }
+
 // SignInHandler : 登录接口
 func SignInHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	username := r.Form.Get("username")
 	password := r.Form.Get("password")
 
-	encPasswd := util.Sha1([]byte(password+pwd_salt))
+	encPasswd := util.Sha1([]byte(password + pwd_salt))
 	//1、校验用户名及密码
 	pwdChecked := dblayer.UserSignIn(username, encPasswd)
 	if !pwdChecked {
@@ -64,16 +65,16 @@ func SignInHandler(w http.ResponseWriter, r *http.Request) {
 	//3、登录成功后重定向到首页
 	//w.Write([]byte("http://"+r.Host+"/static/view/home.html"))
 	resp := util.RespMsg{
-		Code:0,
-		Msg: "OK",
+		Code: 0,
+		Msg:  "OK",
 		Data: struct {
 			Location string
 			Username string
-			Token string
+			Token    string
 		}{
-			Location:"http://" + r.Host + "/static/view/home.html",
-			Username:username,
-			Token:token,
+			Location: "http://" + r.Host + "/static/view/home.html",
+			Username: username,
+			Token:    token,
 		},
 	}
 	w.Write(resp.JSONBytes())
@@ -99,7 +100,7 @@ func UserInfoHandler(w http.ResponseWriter, r *http.Request) {
 	//4.组装并且响应用户数据
 	resp := util.RespMsg{
 		Code: 0,
-		Msg: "OK",
+		Msg:  "OK",
 		Data: user,
 	}
 	w.Write(resp.JSONBytes())
@@ -108,8 +109,8 @@ func UserInfoHandler(w http.ResponseWriter, r *http.Request) {
 func GenToken(username string) string {
 	//生成40位token: md5(username+timestamp+token_salt)+timestamp[:8]
 	ts := fmt.Sprintf("%x", time.Now().Unix())
-	tokenPrefix := util.MD5([]byte(username+ts+"_tokensalt"))
-	return tokenPrefix+ts[:8]
+	tokenPrefix := util.MD5([]byte(username + ts + "_tokensalt"))
+	return tokenPrefix + ts[:8]
 }
 
 // IsTokenValid: token是否有效

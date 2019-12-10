@@ -1,7 +1,7 @@
 package meta
 
 import (
-	mydb "filestore-server/db"
+	mydb "go_project/filestore-server/db"
 )
 // FileMeta : 文件元信息结构
 type FileMeta struct {

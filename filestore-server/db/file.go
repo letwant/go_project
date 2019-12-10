@@ -2,8 +2,8 @@ package db
 
 import (
 	"database/sql"
-	mydb "filestore-server/db/mysql"
 	"fmt"
+	mydb "go_project/filestore-server/db/mysql"
 )
 
 // OnFileUploadFinished : 文件上传完成，保存meta
@@ -12,8 +12,8 @@ func OnFileUploadFinished(filehash string, filename string, filesize int64, file
 		"insert ignore into tbl_file (`file_sha1`,`file_name`,`file_size`," +
 			"`file_addr`,`status`) values (?,?,?,?,1)")
 	if err != nil {
-		fmt.Println("Failed to prepare statement, err:"+err.Error())
-		return  false
+		fmt.Println("Failed to prepare statement, err:" + err.Error())
+		return false
 	}
 	defer stmt.Close()
 
@@ -24,7 +24,7 @@ func OnFileUploadFinished(filehash string, filename string, filesize int64, file
 	}
 
 	if rf, err := ret.RowsAffected(); nil == err {
-		if rf <= 0{
+		if rf <= 0 {
 			fmt.Printf("File with hash:%s has been uploaded before", filehash)
 		}
 		return true
@@ -46,7 +46,7 @@ func GetFileMeta(filehash string) (*TableFile, error) {
 
 	if err != nil {
 		fmt.Println(err.Error())
-		return  nil, err
+		return nil, err
 	}
 	defer stmt.Close()
 	tfile := TableFile{}
@@ -56,6 +56,5 @@ func GetFileMeta(filehash string) (*TableFile, error) {
 		return nil, err
 	}
 	return &tfile, nil
-
 
 }

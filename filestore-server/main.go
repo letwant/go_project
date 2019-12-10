@@ -1,8 +1,8 @@
 package main
 
 import (
-	"filestore-server/handler"
 	"fmt"
+	"go_project/filestore-server/handler"
 	"net/http"
 )
 
@@ -24,7 +24,6 @@ func main() {
 	http.HandleFunc("/file/mpupload/complete", handler.HTTPInterceptor(handler.CompleteUploadHandler))
 
 	http.HandleFunc("/file/downloadurl", handler.HTTPInterceptor(handler.DownloadURLHandler))
-
 
 	http.HandleFunc("/user/signup", handler.SignUpHandler)
 	http.HandleFunc("/user/signin", handler.SignInHandler)

@@ -1,8 +1,8 @@
 package db
 
 import (
-	mydb "filestore-server/db/mysql"
 	"fmt"
+	mydb "go_project/filestore-server/db/mysql"
 )
 
 // UserSignUp : 通过用户名及密码完成user表的注册操作
@@ -10,14 +10,14 @@ func UserSignUp(username string, passwd string) bool {
 	stmt, err := mydb.DBConn().Prepare(
 		"insert ignore into tbl_user (`user_name`, `user_pwd`) values (?,?)")
 	if err != nil {
-		fmt.Println("Failed to insert, err:"+err.Error())
+		fmt.Println("Failed to insert, err:" + err.Error())
 		return false
 	}
 	defer stmt.Close()
 
 	ret, err := stmt.Exec(username, passwd)
 	if err != nil {
-		fmt.Println("Failed to insert, err:"+err.Error())
+		fmt.Println("Failed to insert, err:" + err.Error())
 		return false
 	}
 	if rowsAffected, err := ret.RowsAffected(); nil == err && rowsAffected > 0 {
@@ -25,6 +25,7 @@ func UserSignUp(username string, passwd string) bool {
 	}
 	return false
 }
+
 // UserSignIn : 判断密码是否一致
 func UserSignIn(username string, encpwd string) bool {
 	stmt, err := mydb.DBConn().Prepare("select * from tbl_user where user_name=? limit 1")
@@ -36,8 +37,8 @@ func UserSignIn(username string, encpwd string) bool {
 	if err != nil {
 		fmt.Println(err.Error())
 		return false
-	}else if rows == nil {
-		fmt.Println("username not found:"+username)
+	} else if rows == nil {
+		fmt.Println("username not found:" + username)
 		return false
 	}
 
@@ -48,11 +49,12 @@ func UserSignIn(username string, encpwd string) bool {
 	}
 	return false
 }
+
 // UpdateToken : 刷新用户登录的token
 func UpdateToken(username string, token string) bool {
 	stmt, err := mydb.DBConn().Prepare(
 		"replace into tbl_user_token (`user_name`, `user_token`) values (?,?)")
-	if err != nil{
+	if err != nil {
 		fmt.Println(err.Error())
 		return false
 	}
@@ -67,12 +69,12 @@ func UpdateToken(username string, token string) bool {
 }
 
 type User struct {
-	Username string
-	Email string
-	Phone string
-	SignUpAt string
+	Username     string
+	Email        string
+	Phone        string
+	SignUpAt     string
 	LastActiveAt string
-	Status int
+	Status       int
 }
 
 func GetUserInfo(username string) (User, error) {
